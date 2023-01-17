@@ -1,0 +1,24 @@
+- hosts: terraform-ansible
+  tasks: 
+  - name: installing python3 & VirtualEnv
+    apt: 
+      pkg:
+      - python3
+      - virtualenv
+      update_cache: yes
+    become: yes
+  - name: Installing dependencies
+    pip:
+      virtualenv: /home/ubuntu/virtus/venv
+      name:
+          - django
+          - djangorestframework
+          - flask
+  - name: Initializing project
+    shell: '. /home/ubuntu/virtus/venv/bin/activate; django-admin startproject djangoproject /home/ubuntu/virtus/'
+  - name: Changing hosts in settings.config
+    lineinfile:
+      path: /home/ubuntu/virtus/djangoproject/settings.py
+      regexp: 'ALLOWED_HOSTS'
+      line: 'ALLOWED_HOSTS = ["*"]'
+      backrefs: yes
